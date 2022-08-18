@@ -55,7 +55,8 @@ namespace Pilot
             0.105f,
             hits);
 
-        hits.clear();
+
+        //hits.clear();
         
         world_transform.m_position -= 0.1f * Vector3::UNIT_Z;
 
@@ -76,6 +77,20 @@ namespace Pilot
 
         hits.clear();
 
+
+        //horizontal pass
+        if (physics_scene->sweep(m_rigidbody_shape, world_transform.getMatrix(), horizontal_direction, horizontal_displacement.length(), hits))
+        {
+            //TODO:auto-stepping
+            final_position += hits[0].hit_distance * horizontal_direction;
+        }
+        else
+        {
+            final_position += horizontal_displacement;
+        }
+
+        hits.clear();
+
         // side pass
         //if (physics_scene->sweep(
         //    m_rigidbody_shape,
@@ -87,9 +102,9 @@ namespace Pilot
         //    final_position += /**** [3] ****/;
         //}
         //else
-        {
-            final_position += horizontal_displacement;
-        }
+        //{
+        //    final_position += horizontal_displacement;
+        //}
 
         return final_position;
     }

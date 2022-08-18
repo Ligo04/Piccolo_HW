@@ -77,7 +77,7 @@ namespace Pilot
     {
         if ((m_tick_in_editor_mode == false) && g_is_editor_mode)
             return;
-        std::string name = m_animation_fsm.getCurrentClipBaseName();
+        std::string name = m_animation_fsm.getCurrentClipBaseName();  
         for (auto blend_state : m_animation_res.m_clips)
         {
             if (blend_state->m_name == name)
