@@ -35,10 +35,8 @@ namespace Pilot
 
         std::vector<PhysicsHitInfo> hits;
 
-        Transform world_transform = Transform(
-            current_position + 0.1f * Vector3::UNIT_Z,
-            Quaternion::IDENTITY,
-            Vector3::UNIT_SCALE);
+        Transform world_transform =
+            Transform(current_position + 0.1f * Vector3::UNIT_Z, Quaternion::IDENTITY, Vector3::UNIT_SCALE);
 
         Vector3 vertical_displacement   = displacement.z * Vector3::UNIT_Z;
         Vector3 horizontal_displacement = Vector3(displacement.x, displacement.y, 0.f);
@@ -47,20 +45,19 @@ namespace Pilot
         Vector3 horizontal_direction = horizontal_displacement.normalisedCopy();
 
         Vector3 final_position = current_position;
-        
+
         m_is_touch_ground = physics_scene->sweep(
-            m_rigidbody_shape, world_transform.getMatrix(), Vector3::NEGATIVE_UNIT_Z, 0.105f, hits);
+            m_rigidbody_shape, world_transform.getMatrix(), Vector3::NEGATIVE_UNIT_Z, 0.25f, hits);
 
         hits.clear();
         world_transform.m_position -= 0.1f * Vector3::UNIT_Z;
 
         // vertical pass
-        if (physics_scene->sweep(
-            m_rigidbody_shape,
-            world_transform.getMatrix(),
-            vertical_direction,
-            vertical_displacement.length(),
-            hits))
+        if (physics_scene->sweep(m_rigidbody_shape,
+                                 world_transform.getMatrix(),
+                                 vertical_direction,
+                                 vertical_displacement.length(),
+                                 hits))
         {
             final_position += hits[0].hit_distance * vertical_direction;
         }
@@ -71,11 +68,12 @@ namespace Pilot
 
         hits.clear();
 
-        bool is_on_step = false;
-
         // side pass
-
-        if (physics_scene->sweep(m_rigidbody_shape, world_transform.getMatrix(), horizontal_direction, horizontal_displacement.length(), hits))
+        if (physics_scene->sweep(m_rigidbody_shape,
+                                 world_transform.getMatrix(),
+                                 horizontal_direction,
+                                 horizontal_displacement.length(),
+                                 hits))
         {
             Vector3 side_position = horizontal_displacement;
             for (auto& h : hits)
@@ -84,17 +82,6 @@ namespace Pilot
                                                     h.hit_normal.normalisedCopy();
             }
             final_position += side_position;
-            
-            vertical_displacement = side_position.z * Vector3::UNIT_Z;
-            vertical_direction    = vertical_displacement.normalisedCopy();
-            if (physics_scene->sweep(m_rigidbody_shape,
-                                     world_transform.getMatrix(),
-                                     vertical_direction,
-                                     vertical_displacement.length(),
-                                     hits))
-            {
-                is_on_step = true;
-            }
         }
         else
         {
@@ -103,8 +90,6 @@ namespace Pilot
 
         hits.clear();
 
-
-        //m_is_touch_ground = is_on_step ? is_on_step : m_is_touch_ground;
 
         return final_position;
     }
