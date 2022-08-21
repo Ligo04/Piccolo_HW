@@ -47,7 +47,7 @@ namespace Pilot
         Vector3 final_position = current_position;
 
         m_is_touch_ground = physics_scene->sweep(
-            m_rigidbody_shape, world_transform.getMatrix(), Vector3::NEGATIVE_UNIT_Z, 0.25f, hits);
+            m_rigidbody_shape, world_transform.getMatrix(), Vector3::NEGATIVE_UNIT_Z, 0.20f, hits);
 
         hits.clear();
         world_transform.m_position -= 0.1f * Vector3::UNIT_Z;
