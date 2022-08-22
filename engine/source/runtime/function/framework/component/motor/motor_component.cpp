@@ -72,13 +72,19 @@ namespace Piccolo
         if (command >= (unsigned int)GameCommand::invalid)
             return;
 
-        calculatedDesiredHorizontalMoveSpeed(command, delta_time);
-        calculatedDesiredVerticalMoveSpeed(command, delta_time);
-        calculatedDesiredMoveDirection(command, transform_component->getRotation());
-        calculateDesiredDisplacement(delta_time);
-        calculateTargetPosition(transform_component->getPosition());
-
-        transform_component->setPosition(m_target_position);
+        if (m_motor_res.m_enable_power && m_motor_res.m_power>0.0f)
+        {
+            calculatedDesiredHorizontalMoveSpeed(command, delta_time);
+            calculatedDesiredVerticalMoveSpeed(command, delta_time);
+            calculatedDesiredMoveDirection(command, transform_component->getRotation());
+            calculateDesiredDisplacement(delta_time);
+            calculateTargetPosition(transform_component->getPosition());
+            //1m -1 power
+            float displacement = (m_target_position - transform_component->getPosition()).length();
+            m_motor_res.m_power -= displacement;
+            m_motor_res.m_power = m_motor_res.m_power <= 0.0f ? 0.0f : m_motor_res.m_power;
+            transform_component->setPosition(m_target_position);                            
+        }
     }
 
     void MotorComponent::calculatedDesiredHorizontalMoveSpeed(unsigned int command, float delta_time)

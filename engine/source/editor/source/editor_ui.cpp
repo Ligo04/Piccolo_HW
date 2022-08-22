@@ -233,6 +233,23 @@ namespace Piccolo
                 }
             }
         };
+        m_editor_ui_creator["bool"] = [this, &asset_folder](const std::string& name, void* value_ptr)->void {
+            if (g_node_depth == -1)
+            {
+                std::string label = "##" + name;
+                ImGui::Text("%s", name.c_str());
+                ImGui::SameLine();
+                ImGui::Text("%s", (*static_cast<std::string*>(value_ptr)).c_str());
+            }
+            {
+                if (g_editor_node_state_array[g_node_depth].second)
+                {
+                    std::string full_label = "##" + getLeafUINodeParentLabel() + name;
+                    ImGui::Text("%s", (name + ":").c_str());
+                    ImGui::Checkbox(full_label.c_str(), static_cast<bool*>(value_ptr));
+                }
+            }
+        };
     }
 
     std::string EditorUI::getLeafUINodeParentLabel()
